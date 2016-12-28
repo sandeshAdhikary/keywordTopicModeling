@@ -1,0 +1,61 @@
+---
+title: "Keyword Topic Analysis"
+author: "Sandesh Adhikary"
+date: "December 25, 2016"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introduction
+
+Behind any effective search engine strategy lies a meticiously crafted keyword research. Regardless of what new black-and-white animal themed algorithm update Google releases, text will continue to be the dominant form of indexable content for the forseable future. So trying to optimize a website without some form of keyword analysis is like shooting darts blindfolded. What has changed is the way in which search engines, and consequently SEO marketers, use keywords. Gone are the days of trying to optimize your content for exact keywords. With immense improvements in the natural language processing capabilities of search engines, Google and others have become much better at identifying broad topics.
+
+Well, it's easy enough to say that we need to focus on topics and not keywords. But implementing it in the form of an SEO strategy is an entirely different problem. No matter how much credit we give Google, or end our SEO recommendations with "Google is smart enough to figure it out", I don't think we're at the point where we can completely abandon keyword reasearch. 
+
+At the end of thist article, I hope to have helped you in some way with this problem: how do you take a list of thousands of keywords, and boil it down to major keyword topics. 
+
+I would like to point out that the method presented here largely follows that laid out by Randy Zwitch https://www.r-bloggers.com/clustering-search-keywords-using-k-means-clustering/
+
+### Keyword Frequency Analysis
+Let's start off with the simplest way of finding keyword topics - what are the most frequently used words and phrases in our keyword list? No fancy computations involved here - just give me the top 10 most frequently used words. Immendiately, you run across some problems:
+
+1. I will likely end up with the usual suspects "the","of","and", etc. showing up at the top of my list. It'd be pretty pointless to optimize a site's content for the keywords "the","of", and "is".
+
+2. I would need to be able to lump together common variations of words. For example, "design","designer","designing", etc. should all be counted within the same bucket.
+
+The way to do is by converting your keyword list into a Document Term Matrix (DTM). Let's say you your keyword list looks like this:
+
+a. Cat shampoo
+b. Cat hair products
+c. Hair Care products for my cat
+
+To build the DTM for this list, create a table with three rows for each of the keywords. Now, add one column for each unique word in the above list. Now, fill every cell with 1 or 0 corresponding to whether or not a keyword contains the word in the correpsonding column. Here's what our DTM would look like:
+
+Keywords V | cat | shampoo | hair | products | care | for | my |
+Cat shampoo | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
+Cat hair products | 1 | 0 | 1 | 1 | 0 | 0 | 0 |
+Hair care products for my cat | 1 | 0 | 1 | 1 | 1 | 1 | 1 |
+
+We can clearly see that the most frequently word in this list is "cat" followed by "products". Luckily there are very simple packages in R that will allow you to do this automatically. Here, I walk you through the steps in R
+
+``
+library("RTextTools")
+
+keywordlist <- read.csv(keywordlist.csv)
+
+
+dtm <- create_matrix(searchkeywords$'Natural Search Keyword', 
+                     stemWords=TRUE, 
+                     removeStopwords=FALSE, 
+                     minWordLength=1,
+                     removePunctuation= TRUE)
+``
+
+
+### Keyword Clustering
+
+
+### Keyword Topic Relatioships
